@@ -7,36 +7,45 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import me.chayut.austcacal.databinding.ActivityMainBinding
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
-    private var textViewQuotePrice: TextView? = null
-    private var editTextFx: EditText? = null
-    private var editTextPrice: EditText? = null
-    private var editTextWeight: EditText? = null
-    private var editTextShippingFee: EditText? = null
-    private var prefs: SharedPreferences? = null
+    private lateinit var textViewQuotePrice: TextView
+    private lateinit var editTextFx: EditText
+    private lateinit var editTextPrice: EditText
+    private lateinit var editTextWeight: EditText
+    private lateinit var editTextShippingFee: EditText
+    private lateinit var prefs: SharedPreferences
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        textViewQuotePrice = findViewById(R.id.tv_quote_price)
-        editTextFx = findViewById(R.id.et_fx)
-        editTextPrice = findViewById(R.id.et_price)
-        editTextWeight = findViewById(R.id.et_weight)
-        editTextShippingFee = findViewById(R.id.et_shipping)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        textViewQuotePrice = binding.tvQuotePrice
+        editTextFx = binding.etFx
+        editTextPrice = binding.etPrice
+        editTextWeight = binding.etWeight
+        editTextShippingFee = binding.etShipping
+
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE)
-        editTextFx!!.setText(prefs!!.getString(PREF_FX, "22.5"))
-        editTextPrice!!.setText(prefs!!.getString(PREF_PRICE, ""))
-        editTextWeight!!.setText(prefs!!.getString(PREF_WEIGHT, ""))
-        editTextShippingFee!!.setText(prefs!!.getString(PREF_SHIPPING, "26"))
+        editTextFx.setText(prefs.getString(PREF_FX, "22.5"))
+        editTextPrice.setText(prefs.getString(PREF_PRICE, ""))
+        editTextWeight.setText(prefs.getString(PREF_WEIGHT, ""))
+        editTextShippingFee.setText(prefs.getString(PREF_SHIPPING, "26"))
     }
 
     private fun saveTextDisplay() {
-        val editor = prefs!!.edit() //Create a SharedPreferences editor
-        editor.putString(PREF_FX, editTextFx!!.text.toString())
-        editor.putString(PREF_PRICE, editTextPrice!!.text.toString())
-        editor.putString(PREF_WEIGHT, editTextWeight!!.text.toString())
-        editor.putString(PREF_SHIPPING, editTextShippingFee!!.text.toString())
+        val editor = prefs.edit() //Create a SharedPreferences editor
+        editor.putString(PREF_FX, editTextFx.text.toString())
+        editor.putString(PREF_PRICE, editTextPrice.text.toString())
+        editor.putString(PREF_WEIGHT, editTextWeight.text.toString())
+        editor.putString(PREF_SHIPPING, editTextShippingFee.text.toString())
         editor.apply()
     }
 
@@ -47,12 +56,12 @@ class MainActivity : AppCompatActivity() {
         val shipping: Float
         val quote: Float
         try {
-            fx = editTextFx!!.text.toString().toFloat()
-            price = editTextPrice!!.text.toString().toFloat()
-            weight = editTextWeight!!.text.toString().toFloat()
-            shipping = editTextShippingFee!!.text.toString().toFloat()
+            fx = editTextFx.text.toString().toFloat()
+            price = editTextPrice.text.toString().toFloat()
+            weight = editTextWeight.text.toString().toFloat()
+            shipping = editTextShippingFee.text.toString().toFloat()
             quote = price * 1.2f * fx + weight * fx * shipping
-            textViewQuotePrice!!.text = String.format("%.0f", quote)
+            textViewQuotePrice.text = String.format("%.0f", quote)
         } catch (ex: Exception) {
             return
         }
@@ -79,8 +88,8 @@ class MainActivity : AppCompatActivity() {
         clearAndSetFocus(editTextShippingFee)
     }
 
-    fun clearAndSetFocus(editText: EditText?) {
-        editText!!.setText("")
+    fun clearAndSetFocus(editText: EditText) {
+        editText.setText("")
         editText.requestFocus()
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
